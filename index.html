@@ -2,72 +2,47 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f2f2f7"><title>健康趋势记录</title><link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#f2f2f7"><title>健康趋势</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top"><div><div class="eyebrow">健康记录</div><h1 id="title">摘要</h1></div><button id="export" class="round">↥</button></header>
+<header class="top"><div><div class="eyebrow">健康记录</div><h1 id="title">首页</h1></div><button id="theme" class="round">☾</button></header>
 <main>
 <section id="home" class="page active">
-  <div class="datebar"><button id="prev">‹</button><div><b id="selectedDate"></b><small id="dayLabel"></small></div><button id="next">›</button></div>
-  <div class="hero"><span>今日记录</span><strong id="todayCount">0</strong><small>项</small><p>所有数据默认保存在此设备浏览器。</p></div>
-  <div class="grid"><div class="card stat"><span>治疗</span><b id="mcount">0</b></div><div class="card stat"><span>化验</span><b id="lcount">0</b></div><div class="card stat"><span>状态</span><b id="scount">0</b></div><div class="card stat"><span>连续记录</span><b id="streak">0</b><small>天</small></div></div>
-  <div class="card"><div class="ctitle">近期趋势</div><canvas id="chart" height="190"></canvas><p class="note">图表仅展示你录入的实际化验数据，不进行药物或激素浓度预测。</p></div>
-  <div class="card prediction-card">
-    <div class="ctitle">趋势分析</div>
-    <div class="analysis-row"><span>E2 趋势</span><b id="e2Trend">—</b></div>
-    <div class="analysis-row"><span>T 趋势</span><b id="tTrend">—</b></div>
-    <canvas id="trendChart" height="170"></canvas>
-    <p class="note">这里是对你已录入数据的统计趋势线，不是药代动力学预测，也不能用于决定或调整治疗方案。数据不足时会显示“暂无趋势”。</p>
-  </div>
-  <div class="card"><div class="ctitle">今日状态</div><div id="todayStatus" class="empty">还没有记录</div></div>
+  <div class="datecard"><button id="prev">‹</button><div><b id="dateText"></b><small id="weekday"></small></div><button id="next">›</button></div>
+  <div class="hero"><div class="eyebrow">今日记录</div><strong id="todayTotal">0</strong><span> 项</span><p>本设备本地保存 · 无需账号</p></div>
+  <div class="grid"><div class="card stat"><span>治疗</span><b id="sTreat">0</b></div><div class="card stat"><span>化验</span><b id="sLab">0</b></div><div class="card stat"><span>日志</span><b id="sJournal">0</b></div><div class="card stat"><span>连续记录</span><b id="sStreak">0</b><small> 天</small></div></div>
+  <div class="card"><div class="ctitle">近期趋势</div><canvas id="mainChart" height="180"></canvas><p class="note">仅使用已录入的实际数据进行可视化。</p></div>
+  <div class="card"><div class="ctitle">今日摘要</div><div id="todaySummary" class="muted">今天还没有记录。</div></div>
 </section>
 
-<section id="treatment" class="page">
-  <div class="headrow"><div><h2>治疗记录</h2><p>按医生方案记录实际情况</p></div><button class="primary" data-modal="treatModal">添加</button></div>
-  <div class="seg"><button class="active" data-filter="today">今天</button><button data-filter="all">全部</button></div>
-  <div id="treatList"></div>
-</section>
+<section id="timeline" class="page"><div class="head"><div><h2>时间线</h2><p>所有记录按日期排列</p></div></div><div id="timelineList"></div></section>
 
-<section id="labs" class="page">
-  <div class="headrow"><div><h2>化验</h2><p>保存化验单上的实际结果</p></div><button class="primary" data-modal="labModal">添加</button></div>
-  <div id="labList"></div>
-</section>
+<section id="calendar" class="page"><div class="head"><div><h2>日历</h2><p>点击日期查看当天记录</p></div></div><div class="card"><div class="calhead"><button id="pm">‹</button><b id="month"></b><button id="nm">›</button></div><div class="week">一 二 三 四 五 六 日</div><div id="days" class="days"></div></div><div id="dayDetail"></div></section>
 
-<section id="status" class="page">
-  <div class="headrow"><div><h2>状态</h2><p>记录主观感受与长期变化</p></div><button class="primary" data-modal="statusModal">添加</button></div>
-  <div id="statusList"></div>
-</section>
+<section id="treatment" class="page"><div class="head"><div><h2>治疗</h2><p>按医生方案记录实际情况</p></div><button class="primary" data-modal="treatModal">添加</button></div><div class="seg"><button class="active" data-filter="today">今天</button><button data-filter="all">全部</button></div><div id="treatList"></div></section>
 
-<section id="settings" class="page">
-  <div class="headrow"><div><h2>设置</h2><p>数据、备份与提醒</p></div></div>
-  <div class="card">
-    <div class="setting"><div><b>每日记录提醒</b><p>只保存你填写的提醒时间，不会自动修改治疗方案。</p></div><button class="switch" id="reminderSwitch">关</button></div>
-    <label class="field">提醒时间<input id="reminderTime" type="time"></label>
-  </div>
-  <div class="card">
-    <button class="wide secondary" id="export2">导出 JSON 备份</button>
-    <label class="wide secondary filebtn">恢复 JSON 备份<input id="import" type="file" accept=".json,application/json"></label>
-    <button class="wide danger" id="clear">清空本机数据</button>
-  </div>
-  <div class="card warn"><b>使用说明</b><p>这是个人健康数据记录工具，不提供诊断、处方或剂量调整建议。具体治疗名称、方案和提醒时间请按照医生给出的信息自行填写。</p></div>
-</section>
+<section id="labs" class="page"><div class="head"><div><h2>化验</h2><p>保存实际化验结果</p></div><button class="primary" data-modal="labModal">添加</button></div><div class="card"><canvas id="labChart" height="210"></canvas></div><div id="labList"></div></section>
+
+<section id="journal" class="page"><div class="head"><div><h2>日志</h2><p>身体、情绪与主观感受</p></div><button class="primary" data-modal="journalModal">添加</button></div><div id="journalList"></div></section>
+
+<section id="reports" class="page"><div class="head"><div><h2>报告</h2><p>根据已记录数据自动统计</p></div></div><div class="reportgrid"><div class="card"><span>近 7 天</span><b id="r7">0</b><small> 条记录</small></div><div class="card"><span>近 30 天</span><b id="r30">0</b><small> 条记录</small></div><div class="card"><span>化验次数</span><b id="rlab">0</b></div><div class="card"><span>日志次数</span><b id="rlog">0</b></div></div><div class="card"><div class="ctitle">趋势摘要</div><div id="trendText" class="muted">数据不足。</div></div></section>
+
+<section id="data" class="page"><div class="head"><div><h2>数据</h2><p>备份与恢复</p></div></div><div class="card"><button id="export" class="wide secondary">导出 JSON 备份</button><label class="wide filebtn">恢复 JSON<input id="import" type="file" accept=".json,application/json"></label><button id="csv" class="wide secondary">导出 CSV</button><button id="clear" class="wide danger">清空本机数据</button></div><div class="card"><b>隐私</b><p>数据默认保存在浏览器本地，不会自动上传服务器。</p></div></section>
 </main>
 
 <nav class="tabs">
-<button class="tab active" data-page="home">⌂<span>摘要</span></button>
+<button class="tab active" data-page="home">⌂<span>首页</span></button>
+<button class="tab" data-page="timeline">☷<span>时间线</span></button>
+<button class="tab" data-page="calendar">▦<span>日历</span></button>
 <button class="tab" data-page="treatment">＋<span>治疗</span></button>
 <button class="tab" data-page="labs">⌁<span>化验</span></button>
-<button class="tab" data-page="status">♡<span>状态</span></button>
-<button class="tab" data-page="settings">⚙<span>设置</span></button>
+<button class="tab" data-page="journal">♡<span>日志</span></button>
+<button class="tab" data-page="reports">◔<span>报告</span></button>
+<button class="tab" data-page="data">⚙<span>数据</span></button>
 </nav>
 
-<div class="modal" id="treatModal"><div class="sheet"><div class="sheettop"><h3>添加治疗记录</h3><button data-close>×</button></div>
-<label>日期<input id="td" type="date"></label><label>治疗/处方药名称<input id="tn" placeholder="按医生方案填写"></label><label>记录状态<select id="ts"><option>已记录</option><option>漏记</option><option>其他</option></select></label><label>备注<textarea id="tnote" placeholder="可记录医生方案、实际情况等"></textarea></label><button class="primary wide" id="saveT">保存</button></div></div>
-
-<div class="modal" id="labModal"><div class="sheet"><div class="sheettop"><h3>添加化验</h3><button data-close>×</button></div>
-<label>日期<input id="ld" type="date"></label><div class="two"><label>E2<input id="le" type="number" step="any"></label><label>T<input id="lt" type="number" step="any"></label></div><label>单位/备注<input id="ln" placeholder="按化验单填写"></label><button class="primary wide" id="saveL">保存</button></div></div>
-
-<div class="modal" id="statusModal"><div class="sheet"><div class="sheettop"><h3>添加状态</h3><button data-close>×</button></div>
-<label>日期<input id="sd" type="date"></label><label>心情<select id="sm"><option>平稳</option><option>开心</option><option>低落</option><option>焦虑</option><option>烦躁</option><option>其他</option></select></label><label>身体变化<textarea id="sb"></textarea></label><label>不适/副作用<textarea id="ss"></textarea></label><button class="primary wide" id="saveS">保存</button></div></div>
+<div class="modal" id="treatModal"><div class="sheet"><div class="sheethead"><h3>添加治疗记录</h3><button data-close>×</button></div><label>日期<input id="td" type="date"></label><label>项目名称<input id="tn" placeholder="按医生方案填写"></label><label>状态<select id="ts"><option>已记录</option><option>漏记</option><option>其他</option></select></label><label>备注<textarea id="tnote"></textarea></label><button class="primary wide" id="saveT">保存</button></div></div>
+<div class="modal" id="labModal"><div class="sheet"><div class="sheethead"><h3>添加化验</h3><button data-close>×</button></div><label>日期<input id="ld" type="date"></label><div class="two"><label>E2<input id="le" type="number" step="any"></label><label>T<input id="lt" type="number" step="any"></label></div><label>单位/备注<input id="ln"></label><button class="primary wide" id="saveL">保存</button></div></div>
+<div class="modal" id="journalModal"><div class="sheet"><div class="sheethead"><h3>添加日志</h3><button data-close>×</button></div><label>日期<input id="jd" type="date"></label><label>心情<select id="jm"><option>平稳</option><option>开心</option><option>低落</option><option>焦虑</option><option>烦躁</option><option>其他</option></select></label><label>身体变化<textarea id="jb"></textarea></label><label>不适/备注<textarea id="jn"></textarea></label><button class="primary wide" id="saveJ">保存</button></div></div>
 <script src="app.js"></script>
 </body></html>
