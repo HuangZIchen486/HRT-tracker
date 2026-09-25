@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f2f2f7">
+  <title>健康趋势记录</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">健康记录</div>
+      <h1 id="pageTitle">摘要</h1>
+    </div>
+    <button class="iconbtn" id="exportBtn" title="导出数据">↥</button>
+  </header>
+
+  <main id="app">
+    <section id="summary" class="page active">
+      <div class="hero-card">
+        <div class="hero-label">最近记录</div>
+        <div class="hero-value" id="lastRecord">暂无</div>
+        <div class="muted">数据仅保存在此设备的浏览器中</div>
+      </div>
+      <div class="grid">
+        <article class="card stat"><span>用药记录</span><strong id="medCount">0</strong><small>条</small></article>
+        <article class="card stat"><span>化验记录</span><strong id="labCount">0</strong><small>条</small></article>
+        <article class="card stat"><span>状态记录</span><strong id="moodCount">0</strong><small>条</small></article>
+        <article class="card stat"><span>身体记录</span><strong id="bodyCount">0</strong><small>条</small></article>
+      </div>
+      <article class="card">
+        <div class="card-title">激素化验趋势</div>
+        <canvas id="chart" height="210"></canvas>
+        <div class="legend"><span><i class="dot e2"></i>E2</span><span><i class="dot t"></i>T</span></div>
+        <p class="note">仅显示你实际录入的化验结果，不进行血药浓度或剂量预测。</p>
+      </article>
+    </section>
+
+    <section id="meds" class="page">
+      <div class="section-head"><div><h2>治疗记录</h2><p>记录医生方案与实际记录</p></div><button class="primary" data-open="medModal">添加</button></div>
+      <div id="medList" class="list"></div>
+    </section>
+
+    <section id="labs" class="page">
+      <div class="section-head"><div><h2>化验</h2><p>记录化验单上的实际结果</p></div><button class="primary" data-open="labModal">添加</button></div>
+      <div id="labList" class="list"></div>
+    </section>
+
+    <section id="status" class="page">
+      <div class="section-head"><div><h2>身体与状态</h2><p>用来记录长期变化，不做医学判断</p></div><button class="primary" data-open="statusModal">添加</button></div>
+      <div id="statusList" class="list"></div>
+    </section>
+
+    <section id="settings" class="page">
+      <div class="section-head"><div><h2>设置</h2><p>数据与隐私</p></div></div>
+      <article class="card">
+        <div class="setting"><div><b>本地保存</b><p>记录默认保存在本机浏览器 localStorage。</p></div><span class="pill">开启</span></div>
+        <div class="setting"><div><b>导出备份</b><p>导出 JSON 文件，便于自己保存。</p></div><button class="secondary" id="exportBtn2">导出</button></div>
+        <div class="setting"><div><b>清空数据</b><p>删除本设备上的全部记录。</p></div><button class="danger" id="clearBtn">清空</button></div>
+      </article>
+      <article class="card disclaimer">
+        <b>说明</b>
+        <p>这是健康数据记录工具，不是诊断、处方或用药调整工具。具体药物名称、剂量和提醒时间请以医生给出的方案为准。</p>
+      </article>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-page="summary"><span>⌂</span>摘要</button>
+    <button class="tab" data-page="meds"><span>＋</span>治疗</button>
+    <button class="tab" data-page="labs"><span>⌁</span>化验</button>
+    <button class="tab" data-page="status"><span>♡</span>状态</button>
+    <button class="tab" data-page="settings"><span>⚙</span>设置</button>
+  </nav>
+
+  <div class="modal" id="medModal"><div class="sheet">
+    <div class="sheet-head"><h3>添加治疗记录</h3><button class="close" data-close>×</button></div>
+    <label>日期<input id="medDate" type="date"></label>
+    <label>处方药/治疗名称<input id="medName" placeholder="按医生方案填写"></label>
+    <label>医生处方信息（可选）<input id="medPlan" placeholder="例如医生给出的规格/频次"></label>
+    <label>备注<textarea id="medNote" placeholder="实际记录、漏记说明等"></textarea></label>
+    <button class="primary wide" id="saveMed">保存</button>
+  </div></div>
+
+  <div class="modal" id="labModal"><div class="sheet">
+    <div class="sheet-head"><h3>添加化验</h3><button class="close" data-close>×</button></div>
+    <label>日期<input id="labDate" type="date"></label>
+    <div class="two"><label>E2（实际化验值）<input id="labE2" type="number" step="any"></label><label>T（实际化验值）<input id="labT" type="number" step="any"></label></div>
+    <label>单位/备注<input id="labNote" placeholder="填写化验单单位或其他项目"></label>
+    <button class="primary wide" id="saveLab">保存</button>
+  </div></div>
+
+  <div class="modal" id="statusModal"><div class="sheet">
+    <div class="sheet-head"><h3>添加状态</h3><button class="close" data-close>×</button></div>
+    <label>日期<input id="statusDate" type="date"></label>
+    <label>心情<select id="statusMood"><option>平稳</option><option>开心</option><option>低落</option><option>焦虑</option><option>烦躁</option><option>其他</option></select></label>
+    <label>身体变化<textarea id="statusBody" placeholder="例如睡眠、皮肤、体感等主观记录"></textarea></label>
+    <label>副作用/不适<textarea id="statusSide" placeholder="如有不适，记录发生时间和表现"></textarea></label>
+    <button class="primary wide" id="saveStatus">保存</button>
+  </div></div>
+
+<script src="app.js"></script>
+</body>
+</html>
