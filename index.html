@@ -27,6 +27,18 @@
 
 <section id="reports" class="page"><div class="head"><div><h2>报告</h2><p>根据已记录数据自动统计</p></div></div><div class="reportgrid"><div class="card"><span>近 7 天</span><b id="r7">0</b><small> 条记录</small></div><div class="card"><span>近 30 天</span><b id="r30">0</b><small> 条记录</small></div><div class="card"><span>化验次数</span><b id="rlab">0</b></div><div class="card"><span>日志次数</span><b id="rlog">0</b></div></div><div class="card"><div class="ctitle">趋势摘要</div><div id="trendText" class="muted">数据不足。</div></div></section>
 
+<section id="simulator" class="page">
+  <div class="head"><div><h2>浓度模拟</h2><p>教学演示模型 · 非个人药代预测</p></div></div>
+  <div class="card demo-warning"><b>演示模式</b><p>下面的曲线使用虚构的标准化参数，只用于展示“吸收 → 峰值 → 衰减”的曲线形状。它不会根据你的实际药物、剂量或给药方案计算个人血药浓度。</p></div>
+  <div class="card">
+    <div class="ctitle">模拟参数</div>
+    <label class="simlabel">吸收速度 <input id="absorb" type="range" min="0.2" max="2" value="1" step="0.1"><span id="absorbVal">1.0</span></label>
+    <label class="simlabel">消除速度 <input id="elim" type="range" min="0.2" max="2" value="1" step="0.1"><span id="elimVal">1.0</span></label>
+    <label class="simlabel">演示周期 <select id="period"><option value="24">24 小时</option><option value="48">48 小时</option><option value="72">72 小时</option></select></label>
+  </div>
+  <div class="card"><div class="ctitle">标准化浓度（示例单位）</div><canvas id="simChart" height="240"></canvas><p class="note">纵轴是标准化相对值，不是 pg/mL、ng/dL 或其他临床单位。</p></div>
+  <div class="card"><div class="ctitle">实际化验对照</div><p class="muted">你录入的实际化验结果仍会显示在「化验」页面；这里不会把实际药物方案转换成预测浓度。</p></div>
+</section>
 <section id="data" class="page"><div class="head"><div><h2>数据</h2><p>备份与恢复</p></div></div><div class="card"><button id="export" class="wide secondary">导出 JSON 备份</button><label class="wide filebtn">恢复 JSON<input id="import" type="file" accept=".json,application/json"></label><button id="csv" class="wide secondary">导出 CSV</button><button id="clear" class="wide danger">清空本机数据</button></div><div class="card"><b>隐私</b><p>数据默认保存在浏览器本地，不会自动上传服务器。</p></div></section>
 </main>
 
@@ -38,7 +50,7 @@
 <button class="tab" data-page="labs">⌁<span>化验</span></button>
 <button class="tab" data-page="journal">♡<span>日志</span></button>
 <button class="tab" data-page="reports">◔<span>报告</span></button>
-<button class="tab" data-page="data">⚙<span>数据</span></button>
+<button class="tab" data-page="simulator">∿<span>模拟</span></button><button class="tab" data-page="data">⚙<span>数据</span></button>
 </nav>
 
 <div class="modal" id="treatModal"><div class="sheet"><div class="sheethead"><h3>添加治疗记录</h3><button data-close>×</button></div><label>日期<input id="td" type="date"></label><label>项目名称<input id="tn" placeholder="按医生方案填写"></label><label>状态<select id="ts"><option>已记录</option><option>漏记</option><option>其他</option></select></label><label>备注<textarea id="tnote"></textarea></label><button class="primary wide" id="saveT">保存</button></div></div>
