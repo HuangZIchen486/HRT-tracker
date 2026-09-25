@@ -12,6 +12,13 @@
   <div class="hero"><span>今日记录</span><strong id="todayCount">0</strong><small>项</small><p>所有数据默认保存在此设备浏览器。</p></div>
   <div class="grid"><div class="card stat"><span>治疗</span><b id="mcount">0</b></div><div class="card stat"><span>化验</span><b id="lcount">0</b></div><div class="card stat"><span>状态</span><b id="scount">0</b></div><div class="card stat"><span>连续记录</span><b id="streak">0</b><small>天</small></div></div>
   <div class="card"><div class="ctitle">近期趋势</div><canvas id="chart" height="190"></canvas><p class="note">图表仅展示你录入的实际化验数据，不进行药物或激素浓度预测。</p></div>
+  <div class="card prediction-card">
+    <div class="ctitle">趋势分析</div>
+    <div class="analysis-row"><span>E2 趋势</span><b id="e2Trend">—</b></div>
+    <div class="analysis-row"><span>T 趋势</span><b id="tTrend">—</b></div>
+    <canvas id="trendChart" height="170"></canvas>
+    <p class="note">这里是对你已录入数据的统计趋势线，不是药代动力学预测，也不能用于决定或调整治疗方案。数据不足时会显示“暂无趋势”。</p>
+  </div>
   <div class="card"><div class="ctitle">今日状态</div><div id="todayStatus" class="empty">还没有记录</div></div>
 </section>
 
